@@ -32,3 +32,5 @@ auth-service:
   tag: develop-b842f7a8
 payment-service:
   tag: develop-b842f7a8
+booking-service:
+  tag: develop-b842f7a8
