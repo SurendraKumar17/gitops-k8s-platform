@@ -1,31 +1,25 @@
 global:
   registry: 635457411372.dkr.ecr.us-east-1.amazonaws.com
   env: dev
-
 frontend:
   replicas: 1
   maxReplicas: 4
   tag: "dev-bbed7bda"
-
 book:
   replicas: 1
   maxReplicas: 4
   tag: "dev-b639847f"
-
 search:
   replicas: 1
   maxReplicas: 4
   tag: "dev-b639847f"
-
 user:
   replicas: 1
   maxReplicas: 4
   tag: "dev-b639847f"
-
 postgres:
   host: dev-microservices-postgres.cg9mq6cuoriv.us-east-1.rds.amazonaws.com
   user: bookinguser
-
 ingress:
   enabled: true
   className: alb
@@ -34,3 +28,5 @@ ingress:
     alb.ingress.kubernetes.io/target-type: ip
 pdb:
   maxUnavailable: 1
+auth-service:
+  tag: develop-b842f7a8
