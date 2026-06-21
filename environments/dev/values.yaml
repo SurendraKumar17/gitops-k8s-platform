@@ -10,6 +10,6 @@ notification-service:
 payment-service:
   tag: develop-11eb6b28
 search-service:
-  tag: develop-97e01d45
+  tag: develop-11eb6b28
 booking-service:
   tag: develop-97e01d45
