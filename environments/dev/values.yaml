@@ -2,7 +2,7 @@
 # Image tags are automatically bumped by the CI pipeline (gitops-update job)
 
 frontend:
-  tag: latest
+  tag: develop-11eb6b28
 auth-service:
   tag: latest
 notification-service:
