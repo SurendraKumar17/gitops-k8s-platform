@@ -6,7 +6,7 @@ frontend:
 auth-service:
   tag: latest
 notification-service:
-  tag: develop-97e01d45
+  tag: develop-11eb6b28
 payment-service:
   tag: develop-97e01d45
 search-service:
