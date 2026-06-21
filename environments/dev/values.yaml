@@ -4,7 +4,7 @@
 frontend:
   tag: develop-11eb6b28
 auth-service:
-  tag: latest
+  tag: develop-11eb6b28
 notification-service:
   tag: develop-11eb6b28
 payment-service:
