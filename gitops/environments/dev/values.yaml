@@ -30,3 +30,5 @@ pdb:
   maxUnavailable: 1
 auth-service:
   tag: develop-b842f7a8
+payment-service:
+  tag: develop-b842f7a8
