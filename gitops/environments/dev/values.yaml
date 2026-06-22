@@ -37,4 +37,4 @@ booking-service:
 search-service:
   tag: develop-c1462d57
 notification-service:
-  tag: develop-b83e2a9b
+  tag: develop-c1462d57
