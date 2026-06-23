@@ -35,6 +35,6 @@ payment-service:
 booking-service:
   tag: develop-c1462d57
 search-service:
-  tag: develop-c1462d57
+  tag: develop-34d85706
 notification-service:
   tag: develop-34d85706
