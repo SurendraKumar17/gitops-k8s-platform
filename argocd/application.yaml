@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: booking-app-dev
+  name: app-dev
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -17,7 +17,7 @@ spec:
         - ../../gitops/environments/dev/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: booking-dev
+    namespace: development
   syncPolicy:
     automated:
       prune: true
@@ -34,7 +34,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: booking-app-staging
+  name: app-staging
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -50,7 +50,7 @@ spec:
         - ../../gitops/environments/staging/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: booking-staging
+    namespace: staging
   syncPolicy:
     automated:
       prune: true
@@ -67,7 +67,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: booking-app-prod
+  name: app-prod
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -83,7 +83,7 @@ spec:
         - ../../gitops/environments/prod/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: booking-prod
+    namespace: production
   syncPolicy:
     automated:
       prune: true

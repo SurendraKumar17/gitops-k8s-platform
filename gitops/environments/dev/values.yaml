@@ -1,40 +1,47 @@
 global:
   registry: 635457411372.dkr.ecr.us-east-1.amazonaws.com
   env: dev
+
 frontend:
   replicas: 1
   maxReplicas: 4
-  tag: "develop-34d85706"
+  tag: "dev-latest"
+
+auth:
+  replicas: 1
+  maxReplicas: 4
+  tag: "dev-latest"
+
 book:
   replicas: 1
   maxReplicas: 4
   tag: "dev-b639847f"
+
 search:
   replicas: 1
   maxReplicas: 4
   tag: "dev-b639847f"
-user:
+
+payment:
   replicas: 1
   maxReplicas: 4
-  tag: "dev-b639847f"
+  tag: "dev-latest"
+
+notification:
+  replicas: 1
+  maxReplicas: 4
+  tag: "dev-latest"
+
 postgres:
   host: dev-microservices-postgres.cg9mq6cuoriv.us-east-1.rds.amazonaws.com
   user: bookinguser
+
 ingress:
   enabled: true
   className: alb
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+
 pdb:
   maxUnavailable: 1
-auth-service:
-  tag: develop-34d85706
-payment-service:
-  tag: develop-e5cdc68b
-booking-service:
-  tag: develop-34d85706
-search-service:
-  tag: develop-34d85706
-notification-service:
-  tag: develop-34d85706

@@ -1,4 +1,4 @@
-# default deny all ingress ----- zero trust networking
+# default deny all
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -9,7 +9,7 @@ spec:
   - Ingress
   - Egress
 ---
-# allow ingress → frontend only from ALB
+# allow ALB → frontend
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -22,9 +22,9 @@ spec:
   - Ingress
   ingress:
   - ports:
-    - port: 3000
+    - port: 80
 ---
-# allow services to talk to each other and to postgres
+# allow all services to talk to each other + DNS + egress to AWS
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -46,8 +46,14 @@ spec:
     - podSelector:
         matchLabels:
           {{- include "booking.selectorLabels" . | nindent 10 }}
-  - to: # allow DNS
+  - to: # DNS
     - namespaceSelector: {}
     ports:
     - port: 53
       protocol: UDP
+  - to: # AWS services (RDS, SQS, Secrets Manager)
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - port: 443
+    - port: 5432

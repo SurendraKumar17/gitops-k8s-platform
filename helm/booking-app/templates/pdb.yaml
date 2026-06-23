@@ -1,4 +1,4 @@
-{{- range $service := list "book" "user" "search" "frontend" }}
+{{- range $service := list "auth" "book" "search" "payment" "notification" "frontend" }}
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget

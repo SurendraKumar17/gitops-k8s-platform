@@ -1,4 +1,4 @@
-{{- range $service := list "book" "frontend" }}
+{{- range $service := list "auth" "book" "search" "payment" "frontend" }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -9,7 +9,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: argoproj.io/v1alpha1
-    kind: Rollout                              # ← book and frontend use Rollout
+    kind: Rollout
     name: {{ $.Release.Name }}-{{ $service }}
   minReplicas: {{ index $.Values $service "replicas" }}
   maxReplicas: {{ index $.Values $service "maxReplicas" }}
@@ -41,7 +41,7 @@ spec:
         periodSeconds: 120
 {{- end }}
 ---
-{{- range $service := list "search" "user" }}
+{{- range $service := list "notification" }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -52,7 +52,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment                           # ← search and user use Deployment
+    kind: Deployment
     name: {{ $.Release.Name }}-{{ $service }}
   minReplicas: {{ index $.Values $service "replicas" }}
   maxReplicas: {{ index $.Values $service "maxReplicas" }}

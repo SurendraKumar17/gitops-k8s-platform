@@ -9,26 +9,17 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
-  - http:   # removed host (important for ALB DNS access)
+  - http:
       paths:
-
-      - path: /api/users
+      - path: /api/auth
         pathType: Prefix
         backend:
           service:
-            name: {{ .Release.Name }}-user
+            name: {{ .Release.Name }}-auth
             port:
-              number: 3002
+              number: 3000
 
-      - path: /api/search
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Release.Name }}-search
-            port:
-              number: 3003
-
-      - path: /api/bookings        # ← was /api/book, must match actual route
+      - path: /api/bookings
         pathType: Prefix
         backend:
           service:
@@ -36,10 +27,34 @@ spec:
             port:
               number: 3001
 
-      - path: /                    # catch-all must always be last
+      - path: /api/search
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-search
+            port:
+              number: 3002
+
+      - path: /api/payments
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-payment
+            port:
+              number: 3003
+
+      - path: /api/notifications
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-notification
+            port:
+              number: 3004
+
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: {{ .Release.Name }}-frontend
             port:
-              number: 3000
+              number: 80

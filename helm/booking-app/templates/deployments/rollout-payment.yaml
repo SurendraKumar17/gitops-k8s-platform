@@ -1,78 +1,40 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
-  name: {{ .Release.Name }}-user
+  name: {{ .Release.Name }}-payment
   labels:
     {{- include "booking.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.user.replicas }}
+  replicas: {{ .Values.payment.replicas }}
   revisionHistoryLimit: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
   selector:
     matchLabels:
-      app: user
+      app: payment
   template:
     metadata:
       labels:
-        app: user
+        app: payment
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3002"
+        prometheus.io/port: "3003"
         prometheus.io/path: "/metrics"
     spec:
       terminationGracePeriodSeconds: 30
-      serviceAccountName: {{ .Release.Name }}-user
-
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app: user
-
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: user
-                topologyKey: kubernetes.io/hostname
-
+      serviceAccountName: {{ .Release.Name }}-payment
       containers:
-      - name: user
-        image: {{ .Values.global.registry }}/user:{{ .Values.user.tag }}
+      - name: payment
+        image: {{ .Values.global.registry }}/payment:{{ .Values.payment.tag }}
         imagePullPolicy: IfNotPresent
-
         ports:
         - name: http
-          containerPort: 3002
-
+          containerPort: 3003
         env:
         - name: PORT
-          value: "3002"
+          value: "3003"
         - name: SERVICE_NAME
-          value: "user"
+          value: "payment"
         - name: NODE_ENV
           value: {{ .Values.global.env }}
-        - name: DB_NAME
-          value: "bookingdb"
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: password
-
-        envFrom:
-        - configMapRef:
-            name: {{ .Release.Name }}-config
-
         resources:
           requests:
             cpu: "100m"
@@ -80,37 +42,32 @@ spec:
           limits:
             cpu: "500m"
             memory: "512Mi"
-
         livenessProbe:
           httpGet:
             path: /health
-            port: 3002
+            port: 3003
           initialDelaySeconds: 15
           periodSeconds: 10
           failureThreshold: 3
           timeoutSeconds: 5
-
         readinessProbe:
           httpGet:
             path: /ready
-            port: 3002
+            port: 3003
           initialDelaySeconds: 10
           periodSeconds: 5
           failureThreshold: 3
           timeoutSeconds: 3
-
         startupProbe:
           httpGet:
             path: /health
-            port: 3002
+            port: 3003
           failureThreshold: 30
           periodSeconds: 10
-
         lifecycle:
           preStop:
             exec:
               command: ["sh", "-c", "sleep 5"]
-
         securityContext:
           allowPrivilegeEscalation: false
           runAsNonRoot: true
@@ -118,14 +75,26 @@ spec:
           readOnlyRootFilesystem: true
           capabilities:
             drop: ["ALL"]
-
         volumeMounts:
         - name: tmp
           mountPath: /tmp
-
       volumes:
       - name: tmp
         emptyDir: {}
-
       securityContext:
         fsGroup: 1000
+  strategy:
+    canary:
+      analysis:
+        templates:
+        - templateName: {{ .Release.Name }}-success-rate
+        startingStep: 2
+        args:
+        - name: namespace
+          value: {{ .Release.Namespace }}
+      steps:
+      - setWeight: 10
+      - pause: {duration: 2m}
+      - setWeight: 50
+      - pause: {duration: 2m}
+      - setWeight: 100
