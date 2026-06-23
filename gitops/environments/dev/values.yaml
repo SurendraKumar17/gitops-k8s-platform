@@ -4,7 +4,7 @@ global:
 frontend:
   replicas: 1
   maxReplicas: 4
-  tag: "develop-c1462d57"
+  tag: "develop-34d85706"
 book:
   replicas: 1
   maxReplicas: 4
