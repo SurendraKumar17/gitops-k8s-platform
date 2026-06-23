@@ -29,7 +29,7 @@ ingress:
 pdb:
   maxUnavailable: 1
 auth-service:
-  tag: develop-c1462d57
+  tag: develop-34d85706
 payment-service:
   tag: develop-34d85706
 booking-service:
