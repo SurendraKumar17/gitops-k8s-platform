@@ -1,38 +1,38 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ .Release.Name }}-book
+  name: {{ .Release.Name }}-search
   labels:
     {{- include "booking.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.book.replicas }}
+  replicas: {{ .Values.search.replicas }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: book
+      app: search
   template:
     metadata:
       labels:
-        app: book
+        app: search
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3001"
+        prometheus.io/port: "3002"
         prometheus.io/path: "/metrics"
     spec:
       terminationGracePeriodSeconds: 30
-      serviceAccountName: {{ .Release.Name }}-book
+      serviceAccountName: {{ .Release.Name }}-search
       containers:
-      - name: book
-        image: {{ .Values.global.registry }}/book:{{ .Values.book.tag }}
+      - name: search
+        image: {{ .Values.global.registry }}/search:{{ .Values.search.tag }}
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
-          containerPort: 3001
+          containerPort: 3002
         env:
         - name: PORT
-          value: "3001"
+          value: "3002"
         - name: SERVICE_NAME
-          value: "book"
+          value: "search"
         - name: NODE_ENV
           value: {{ .Values.global.env }}
         resources:
@@ -45,7 +45,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 3001
+            port: 3002
           initialDelaySeconds: 15
           periodSeconds: 10
           failureThreshold: 3
@@ -53,7 +53,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ready
-            port: 3001
+            port: 3002
           initialDelaySeconds: 10
           periodSeconds: 5
           failureThreshold: 3
@@ -61,7 +61,7 @@ spec:
         startupProbe:
           httpGet:
             path: /health
-            port: 3001
+            port: 3002
           failureThreshold: 30
           periodSeconds: 10
         lifecycle:

@@ -1,38 +1,38 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-book
+  name: {{ .Release.Name }}-notification
   labels:
     {{- include "booking.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.book.replicas }}
+  replicas: {{ .Values.notification.replicas }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: book
+      app: notification
   template:
     metadata:
       labels:
-        app: book
+        app: notification
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3001"
+        prometheus.io/port: "3004"
         prometheus.io/path: "/metrics"
     spec:
       terminationGracePeriodSeconds: 30
-      serviceAccountName: {{ .Release.Name }}-book
+      serviceAccountName: {{ .Release.Name }}-notification
       containers:
-      - name: book
-        image: {{ .Values.global.registry }}/book:{{ .Values.book.tag }}
+      - name: notification
+        image: {{ .Values.global.registry }}/notification:{{ .Values.notification.tag }}
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
-          containerPort: 3001
+          containerPort: 3004
         env:
         - name: PORT
-          value: "3001"
+          value: "3004"
         - name: SERVICE_NAME
-          value: "book"
+          value: "notification"
         - name: NODE_ENV
           value: {{ .Values.global.env }}
         resources:
@@ -45,7 +45,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 3001
+            port: 3004
           initialDelaySeconds: 15
           periodSeconds: 10
           failureThreshold: 3
@@ -53,7 +53,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ready
-            port: 3001
+            port: 3004
           initialDelaySeconds: 10
           periodSeconds: 5
           failureThreshold: 3
@@ -61,7 +61,7 @@ spec:
         startupProbe:
           httpGet:
             path: /health
-            port: 3001
+            port: 3004
           failureThreshold: 30
           periodSeconds: 10
         lifecycle:
@@ -83,18 +83,3 @@ spec:
         emptyDir: {}
       securityContext:
         fsGroup: 1000
-  strategy:
-    canary:
-      analysis:
-        templates:
-        - templateName: {{ .Release.Name }}-success-rate
-        startingStep: 2
-        args:
-        - name: namespace
-          value: {{ .Release.Namespace }}
-      steps:
-      - setWeight: 10
-      - pause: {duration: 2m}
-      - setWeight: 50
-      - pause: {duration: 2m}
-      - setWeight: 100
