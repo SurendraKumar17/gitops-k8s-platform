@@ -42,3 +42,5 @@ search-service:
   tag: develop-71b8fa90
 booking-service:
   tag: develop-71b8fa90
+auth-service:
+  tag: develop-71b8fa90
