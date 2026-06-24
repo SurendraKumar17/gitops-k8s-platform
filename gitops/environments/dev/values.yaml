@@ -40,3 +40,5 @@ payment-service:
   tag: develop-95e747ac
 auth-service:
   tag: develop-95e747ac
+booking-service:
+  tag: develop-95e747ac
