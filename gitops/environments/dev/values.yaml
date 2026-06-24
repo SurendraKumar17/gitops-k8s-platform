@@ -42,3 +42,5 @@ auth-service:
   tag: develop-95e747ac
 booking-service:
   tag: develop-95e747ac
+notification-service:
+  tag: develop-95e747ac
