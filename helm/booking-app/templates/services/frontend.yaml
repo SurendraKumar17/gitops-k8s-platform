@@ -10,6 +10,6 @@ spec:
     app: frontend
   ports:
     - name: http
-      port: 3000        # ← was 80, your ingress routes to port 3000
+      port: 80
       targetPort: http
       protocol: TCP

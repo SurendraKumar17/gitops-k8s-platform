@@ -10,6 +10,6 @@ spec:
     app: search
   ports:
     - name: http
-      port: 3003        # ← was 3000, your deployment runs on 3003
+      port: 3002
       targetPort: http
       protocol: TCP
