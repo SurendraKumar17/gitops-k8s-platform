@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app-dev
+  name: bookmytrip-dev
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/SurendraKumar17/microservices-gitops-platform
-    targetRevision: develop
+    repoURL: https://github.com/SurendraKumar17/microservices-cd-platform
+    targetRevision: main
     path: helm/booking-app
     helm:
       valueFiles:
@@ -17,7 +17,7 @@ spec:
         - ../../gitops/environments/dev/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: development
+    namespace: app-dev
   syncPolicy:
     automated:
       prune: true
@@ -30,93 +30,3 @@ spec:
         maxDuration: 3m
     syncOptions:
       - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: app-staging
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/SurendraKumar17/microservices-gitops-platform
-    targetRevision: release/1.0.0
-    path: helm/booking-app
-    helm:
-      valueFiles:
-        - values.yaml
-        - ../../gitops/environments/staging/values.yaml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: staging
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
-    syncOptions:
-      - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: app-prod
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/SurendraKumar17/microservices-gitops-platform
-    targetRevision: main
-    path: helm/booking-app
-    helm:
-      valueFiles:
-        - values.yaml
-        - ../../gitops/environments/prod/values.yaml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: production
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
-    syncOptions:
-      - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: cluster-infra
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/SurendraKumar17/microservices-gitops-platform
-    targetRevision: release/1.0.0   
-    path: gitops/cluster-wide
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - RespectIgnoreDifferences=true
