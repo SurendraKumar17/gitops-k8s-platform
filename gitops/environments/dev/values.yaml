@@ -12,7 +12,7 @@ auth:
 book:
   replicas: 1
   maxReplicas: 4
-  tag: "develop-371973d6"
+  tag: "develop-f7d5c9fb"
 search:
   replicas: 1
   maxReplicas: 4
