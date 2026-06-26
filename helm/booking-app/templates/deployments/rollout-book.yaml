@@ -16,7 +16,7 @@ spec:
         app: book
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3001"
+        prometheus.io/port: "8080"
         prometheus.io/path: "/metrics"
     spec:
       terminationGracePeriodSeconds: 30
@@ -85,16 +85,5 @@ spec:
         fsGroup: 1000
   strategy:
     canary:
-      analysis:
-        templates:
-        - templateName: {{ .Release.Name }}-success-rate
-        startingStep: 2
-        args:
-        - name: namespace
-          value: {{ .Release.Namespace }}
       steps:
-      - setWeight: 10
-      - pause: {duration: 2m}
-      - setWeight: 50
-      - pause: {duration: 2m}
       - setWeight: 100
