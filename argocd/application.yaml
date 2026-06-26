@@ -14,15 +14,10 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-        - /gitops/environments/dev/values.yaml
+        - ../../gitops/environments/dev/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: app-dev
-  # Tell ArgoCD to treat Ingress as always healthy so the sync wave
-  # doesn't block waiting for ALB provisioning. The ALB needs pods
-  # behind it to become healthy, but pods can't start until ArgoCD
-  # deploys the Rollouts — classic chicken-and-egg. This breaks the
-  # loop. ALB will become healthy naturally once pods are running.
   resourceHealthCustomization:
     - group: networking.k8s.io
       kind: Ingress
@@ -44,7 +39,7 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - SkipDryRunOnMissingResource=true
-
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
