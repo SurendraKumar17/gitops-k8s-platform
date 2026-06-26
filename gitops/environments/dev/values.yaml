@@ -16,7 +16,7 @@ book:
 search:
   replicas: 1
   maxReplicas: 4
-  tag: "develop-97a28555"
+  tag: "develop-879b0983"
 payment:
   replicas: 1
   maxReplicas: 4
