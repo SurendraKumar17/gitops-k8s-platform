@@ -1,41 +1,67 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ .Release.Name }}-search
+  name: {{ .Release.Name }}-payment
   labels:
     {{- include "booking.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.search.replicas }}
+  replicas: {{ .Values.payment.replicas }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: search
+      app: payment
   template:
     metadata:
       labels:
-        app: search
+        app: payment
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3002"
+        prometheus.io/port: "3003"
         prometheus.io/path: "/metrics"
     spec:
       terminationGracePeriodSeconds: 30
-      serviceAccountName: {{ .Release.Name }}-search
+      serviceAccountName: {{ .Release.Name }}-payment
       containers:
-      - name: search
-        image: {{ .Values.global.registry }}/search-service:{{ .Values.search.tag }}
+      - name: payment
+        image: {{ .Values.global.registry }}/payment-service:{{ .Values.payment.tag }}
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
-          containerPort: 3002
+          containerPort: 3003
         env:
         - name: PORT
-          value: "3002"
+          value: "3003"
         - name: SERVICE_NAME
-          value: "search"
+          value: "payment"
         - name: NODE_ENV
           value: {{ .Values.global.env }}
-        resources:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: host
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: port
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: dbname
+        - name: DATABASE_URL
+          value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=require"
           requests:
             cpu: "100m"
             memory: "128Mi"
@@ -45,7 +71,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 3002
+            port: 3003
           initialDelaySeconds: 15
           periodSeconds: 10
           failureThreshold: 3
@@ -53,7 +79,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ready
-            port: 3002
+            port: 3003
           initialDelaySeconds: 10
           periodSeconds: 5
           failureThreshold: 3
@@ -61,7 +87,7 @@ spec:
         startupProbe:
           httpGet:
             path: /health
-            port: 3002
+            port: 3003
           failureThreshold: 30
           periodSeconds: 10
         lifecycle:
