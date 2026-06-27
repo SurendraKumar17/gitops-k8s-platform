@@ -20,7 +20,7 @@ search:
 payment:
   replicas: 1
   maxReplicas: 4
-  tag: "develop-5586bd5d"
+  tag: "develop-acd45d28"
 notification:
   replicas: 1
   maxReplicas: 4
