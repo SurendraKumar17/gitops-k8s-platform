@@ -1,0 +1,25 @@
+# ================================================================
+# gp2-wait StorageClass
+#
+# Referenced by Loki, Tempo, and Grafana's PVCs (via their Helm
+# values.yaml storageClassName settings) but never actually created
+# anywhere in the cluster - this is what's blocking all the Pending
+# PVCs and the pods that depend on them.
+#
+# WaitForFirstConsumer: delays actual EBS volume creation until a
+# pod using the PVC is scheduled to a node. This avoids a mismatch
+# where the volume gets created in one AZ but the pod gets scheduled
+# in another (which would make the volume unusable - EBS volumes are
+# AZ-locked).
+# ================================================================
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp2-wait
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp2
+  fsType: ext4
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+allowVolumeExpansion: true
