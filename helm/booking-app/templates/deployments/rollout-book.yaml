@@ -23,7 +23,7 @@ spec:
       serviceAccountName: {{ .Release.Name }}-book
       initContainers:
       - name: otel-agent-init
-        image: public.ecr.aws/aws-observability/aws-otel-java-instrumentation:v1.32.2
+        image: otel/opentelemetry-java-instrumentation:1.32.0
         imagePullPolicy: IfNotPresent
         command: ["cp", "/javaagent.jar", "/otel/opentelemetry-javaagent.jar"]
         securityContext:
