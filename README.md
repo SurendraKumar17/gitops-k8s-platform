@@ -1,1 +1,1 @@
-# microservices-cd-platform
+# gitops-k8s-platform

@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/SurendraKumar17/microservices-cd-platform
+    repoURL: https://github.com/SurendraKumar17/gitops-k8s-platform
     targetRevision: main
     path: helm/booking-app
     helm:
@@ -42,7 +42,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/SurendraKumar17/microservices-cd-platform
+    repoURL: https://github.com/SurendraKumar17/gitops-k8s-platform
     targetRevision: main
     path: gitops/cluster-wide
   destination:
