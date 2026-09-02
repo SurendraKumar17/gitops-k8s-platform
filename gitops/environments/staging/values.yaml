@@ -32,3 +32,5 @@ auth:
   tag: develop-7f6c98cf
 payment:
   tag: develop-acd45d28
+notification:
+  tag: develop-1e999e03
