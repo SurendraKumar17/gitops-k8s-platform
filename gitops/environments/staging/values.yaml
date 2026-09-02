@@ -28,3 +28,5 @@ ingress:
     alb.ingress.kubernetes.io/target-type: ip
 pdb:
   maxUnavailable: 1
+auth:
+  tag: develop-7f6c98cf
