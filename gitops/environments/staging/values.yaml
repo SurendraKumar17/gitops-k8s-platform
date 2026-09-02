@@ -12,7 +12,7 @@ book:
 search:
   replicas: 1
   maxReplicas: 4
-  tag: "staging-688341b4"
+  tag: "develop-acd45d28"
 user:
   replicas: 1
   maxReplicas: 4
