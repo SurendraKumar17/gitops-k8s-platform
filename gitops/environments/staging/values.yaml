@@ -30,3 +30,5 @@ pdb:
   maxUnavailable: 1
 auth:
   tag: develop-7f6c98cf
+payment:
+  tag: develop-acd45d28
