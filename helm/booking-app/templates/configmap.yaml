@@ -7,6 +7,8 @@ metadata:
     {{- include "booking.labels" . | nindent 4 }}
 data:
   NODE_ENV: {{ .Values.global.env }}
-  DB_HOST: {{ .Values.postgres.host }}
+  DB_HOST: {{ .Values.postgres.host | quote }}
   DB_PORT: "5432"
-  DB_USER: {{ .Values.postgres.user }}
+  DB_USER: {{ .Values.postgres.user | quote }}
+  DB_NAME: {{ .Values.postgres.dbname | quote }}
+  MONGO_DB_NAME: {{ .Values.mongodb.dbname | quote }}

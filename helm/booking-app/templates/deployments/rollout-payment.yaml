@@ -21,6 +21,21 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
       serviceAccountName: {{ .Release.Name }}-payment
+      initContainers:
+      - name: rds-ca-init
+        image: curlimages/curl:8.8.0
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "curl -sSL -o /certs/global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem"]
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+        volumeMounts:
+          - name: rds-ca
+            mountPath: /certs
       containers:
       - name: payment
         image: {{ .Values.global.registry }}/payment-service:{{ .Values.payment.tag }}
@@ -34,34 +49,37 @@ spec:
         - name: SERVICE_NAME
           value: "payment"
         - name: NODE_ENV
-          value: {{ .Values.global.env }}
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: NODE_ENV
         - name: DB_HOST
           valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: host
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_HOST
         - name: DB_PORT
           valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: port
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_PORT
         - name: DB_USER
           valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: username
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_USER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_NAME
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: password
-        - name: DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: dbname
         - name: DATABASE_URL
-          value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=require"
+          value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem"
         - name: OTEL_SERVICE_NAME
           value: "payment"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -113,8 +131,13 @@ spec:
         volumeMounts:
         - name: tmp
           mountPath: /tmp
+        - name: rds-ca
+          mountPath: /certs
+          readOnly: true
       volumes:
       - name: tmp
+        emptyDir: {}
+      - name: rds-ca
         emptyDir: {}
       securityContext:
         fsGroup: 1000

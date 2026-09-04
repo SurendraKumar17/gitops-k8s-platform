@@ -1,22 +1,41 @@
 global:
-  registry: 635457411372.dkr.ecr.us-east-1.amazonaws.com
+  registry: 717292229408.dkr.ecr.us-east-1.amazonaws.com
   env: prod
 frontend:
-  replicas: 3
-  maxReplicas: 10
-  tag: "prod-bbed7bda"
+  replicas: 1
+  maxReplicas: 4
+  tag: "develop-7f6c98cf"
+auth:
+  replicas: 1
+  maxReplicas: 4
+  tag: "develop-7f6c98cf"
 book:
-  replicas: 3
-  maxReplicas: 10
-  tag: "prod-118cf47a"
+  replicas: 1
+  maxReplicas: 4
+  tag: "develop-7f6c98cf"
 search:
-  replicas: 3
-  maxReplicas: 10
-  tag: "prod-bbed7bda"
-user:
-  replicas: 3
-  maxReplicas: 10
-  tag: "prod-bbed7bda"
+  replicas: 1
+  maxReplicas: 4
+  tag: "develop-acd45d28"
+payment:
+  replicas: 1
+  maxReplicas: 4
+  tag: "develop-acd45d28"
+notification:
+  replicas: 1
+  maxReplicas: 4
+  tag: "develop-1e999e03"
 postgres:
-  host: prod-microservices-postgres.cg9mq6cuoriv.us-east-1.rds.amazonaws.com
+  host: prod-microservices-postgres.cqfa2g00enzb.us-east-1.rds.amazonaws.com
   user: bookinguser
+  dbname: bookingdb
+mongodb:
+  dbname: notification_db
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+pdb:
+  maxUnavailable: 1

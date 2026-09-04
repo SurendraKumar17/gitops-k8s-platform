@@ -36,6 +36,20 @@ spec:
         volumeMounts:
           - name: otel-agent
             mountPath: /otel
+      - name: rds-ca-init
+        image: curlimages/curl:8.8.0
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "curl -sSL -o /certs/global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem"]
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+        volumeMounts:
+          - name: rds-ca
+            mountPath: /certs
       containers:
       - name: book
         image: {{ .Values.global.registry }}/booking-service:{{ .Values.book.tag }}
@@ -48,31 +62,40 @@ spec:
           value: "8080"
         - name: SERVICE_NAME
           value: "book"
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: NODE_ENV
         - name: DB_HOST
           valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: host
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_HOST
         - name: DB_PORT
           valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: port
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_PORT
         - name: DB_USER
           valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: username
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_USER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: DB_NAME
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: password
-        - name: DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: dbname
+        - name: DB_SSL_MODE
+          value: "verify-full"
+        - name: DB_SSL_ROOT_CERT
+          value: "/certs/global-bundle.pem"
         - name: JAVA_TOOL_OPTIONS
           value: "-javaagent:/otel/opentelemetry-javaagent.jar -Xss512k -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
         - name: OTEL_SERVICE_NAME
@@ -146,10 +169,15 @@ spec:
           mountPath: /tmp
         - name: otel-agent
           mountPath: /otel
+        - name: rds-ca
+          mountPath: /certs
+          readOnly: true
       volumes:
       - name: tmp
         emptyDir: {}
       - name: otel-agent
+        emptyDir: {}
+      - name: rds-ca
         emptyDir: {}
       securityContext:
         fsGroup: 1000
