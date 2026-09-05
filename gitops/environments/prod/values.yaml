@@ -2,29 +2,29 @@ global:
   registry: 717292229408.dkr.ecr.us-east-1.amazonaws.com
   env: prod
 frontend:
-  replicas: 1
+  replicas: 2
   maxReplicas: 4
-  tag: "develop-7f6c98cf"
+  tag: "develop-386ba424"
 auth:
-  replicas: 1
+  replicas: 2
   maxReplicas: 4
-  tag: "develop-7f6c98cf"
+  tag: "develop-386ba424"
 book:
-  replicas: 1
+  replicas: 2
   maxReplicas: 4
-  tag: "develop-7f6c98cf"
+  tag: "develop-386ba424"
 search:
-  replicas: 1
+  replicas: 2
   maxReplicas: 4
-  tag: "develop-acd45d28"
+  tag: "develop-386ba424"
 payment:
-  replicas: 1
+  replicas: 2
   maxReplicas: 4
-  tag: "develop-acd45d28"
+  tag: "develop-386ba424"
 notification:
-  replicas: 1
+  replicas: 2
   maxReplicas: 4
-  tag: "develop-1e999e03"
+  tag: "develop-386ba424"
 postgres:
   host: prod-microservices-postgres.cqfa2g00enzb.us-east-1.rds.amazonaws.com
   user: bookinguser
