@@ -8,7 +8,7 @@ frontend:
 auth:
   replicas: 2
   maxReplicas: 4
-  tag: "develop-386ba424"
+  tag: "develop-05e78745"
 book:
   replicas: 2
   maxReplicas: 4
